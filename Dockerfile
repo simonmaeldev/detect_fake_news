@@ -10,6 +10,9 @@ RUN pip3 install numpy pandas scikit-learn
 # Copy the news.csv file into the container
 COPY news.csv /app/news.csv
 
+# Copy the script file into the container
+COPY detect_fake.py /app/detect_fake.py
+
 # Set the working directory
 WORKDIR /app
 
