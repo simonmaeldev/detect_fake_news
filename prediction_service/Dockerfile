@@ -11,4 +11,4 @@ RUN pip install scikit-learn
 WORKDIR /app
 
 # Command to run when the container starts
-CMD ["/bin/sh"]
+CMD ["python", "detect_fake.py"]

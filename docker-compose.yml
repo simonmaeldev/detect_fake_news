@@ -1,14 +1,12 @@
 services:
-  app:
-    image: python:3.12-alpine3.19
-    container_name: python_script_container
+  prediction_service:
+    build:
+      context: ./prediction_service
+      dockerfile: Dockerfile
+    container_name: prediction_service_container
     working_dir: /app
     volumes:
-      - ./:/app
-    command: /bin/sh
+      - ./prediction_service:/app
     ports:
       - 8080:8080
-    # Dependencies and other setup
-    build:
-      context: .
-      dockerfile: Dockerfile
+    command: python detect_fake.py
