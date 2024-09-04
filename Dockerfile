@@ -5,8 +5,9 @@ FROM python:3.12-alpine3.19
 
 # Install numpy, pandas, and scikit-learn
 RUN pip install numpy pandas
-# troubles installing scikit-learn with pip, but with packages it's okay
-RUN apk add py3-scikit-learn
+# scikit-learn dependencies
+RUN apk add --no-cache gcc g++ make libffi-dev musl-dev python3-dev
+RUN pip install scikit-learn
 
 # Copy the news.csv file into the container
 COPY news.csv /app/news.csv
