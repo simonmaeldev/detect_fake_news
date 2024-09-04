@@ -4,20 +4,21 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import PassiveAggressiveClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
 import pickle
+from typing import Tuple, Union
 
 class FakeNewsDetector:
     def __init__(self, 
-                 stop_words='english', 
-                 max_df=0.7, 
-                 max_iter=50, 
-                 test_size=0.2, 
-                 random_state=7):
+                 stop_words: Union[str, list] = 'english', 
+                 max_df: float = 0.7, 
+                 max_iter: int = 50, 
+                 test_size: float = 0.2, 
+                 random_state: int = 7):
         self.vectorizer = TfidfVectorizer(stop_words=stop_words, max_df=max_df)
         self.classifier = PassiveAggressiveClassifier(max_iter=max_iter)
         self.test_size = test_size
         self.random_state = random_state
         
-    def train(self, csv_file):
+    def train(self, csv_file: str) -> None:
         # Load and preprocess data
         df = pd.read_csv(csv_file)
         labels = df.label
@@ -38,18 +39,18 @@ class FakeNewsDetector:
         print(f'Accuracy: {round(score*100,2)}%')
         print(confusion_matrix(y_test, y_pred, labels=['FAKE','REAL']))
         
-    def save_model(self, model_file):
+    def save_model(self, model_file: str) -> None:
         with open(model_file, 'wb') as file:
             pickle.dump((self.vectorizer, self.classifier), file)
     
     @classmethod
-    def load_model(cls, model_file):
+    def load_model(cls, model_file: str) -> 'FakeNewsDetector':
         detector = cls()
         with open(model_file, 'rb') as file:
             detector.vectorizer, detector.classifier = pickle.load(file)
         return detector
     
-    def predict(self, text):
+    def predict(self, text: str) -> Tuple[str, float]:
         # Vectorize the input text
         tfidf_text = self.vectorizer.transform([text])
         
