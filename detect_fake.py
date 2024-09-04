@@ -6,6 +6,7 @@ from sklearn.linear_model import PassiveAggressiveClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
 import pickle
 from typing import Tuple, Union
+from scipy.special import expit
 
 class FakeNewsDetector:
     def __init__(self, 
@@ -58,20 +59,16 @@ class FakeNewsDetector:
         # Get decision function scores
         decision_scores = self.classifier.decision_function(tfidf_text)
         
-        # Convert decision scores to probabilities
-        prob = -decision_scores
-        np.exp(prob, prob)
-        prob += 1
-        np.reciprocal(prob, prob)
-        probabilities = np.vstack([1 - prob, prob]).T[0]
+        # Convert decision scores to probabilities using sigmoid
+        prob = expit(decision_scores)
         
         # Make prediction
-        prediction = 'REAL' if probabilities[1] > 0.5 else 'FAKE'
+        prediction = 'REAL' if prob > 0.5 else 'FAKE'
         
         # Get probability as percentage
-        probability_percentage = probabilities[1] * 100 if prediction == 'REAL' else probabilities[0] * 100
+        probability_percentage = prob[0] * 100 if prediction == 'REAL' else (1 - prob[0]) * 100
         
-        return prediction, probability_percentage
+        return prediction, round(probability_percentage, 2)
 
 # Example usage:
 if __name__ == "__main__":
