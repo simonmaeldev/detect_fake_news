@@ -54,17 +54,23 @@ class FakeNewsDetector:
         # Vectorize the input text
         tfidf_text = self.vectorizer.transform([text])
         
+        # Get decision function scores
+        decision_scores = self.classifier.decision_function(tfidf_text)
+        
+        # Convert decision scores to probabilities
+        prob = -decision_scores
+        np.exp(prob, prob)
+        prob += 1
+        np.reciprocal(prob, prob)
+        probabilities = np.vstack([1 - prob, prob]).T[0]
+        
         # Make prediction
-        prediction = self.classifier.predict(tfidf_text)
+        prediction = 'REAL' if probabilities[1] > 0.5 else 'FAKE'
         
-        # Get confidence score
-        confidence = self.classifier.decision_function(tfidf_text)
+        # Get probability as percentage
+        probability_percentage = probabilities[1] * 100 if prediction == 'REAL' else probabilities[0] * 100
         
-        # The confidence score is a single value for binary classification
-        # Positive values indicate the 'REAL' class, negative values indicate the 'FAKE' class
-        confidence_score = abs(confidence[0])
-        
-        return prediction[0], confidence_score
+        return prediction, probability_percentage
 
 # Example usage:
 if __name__ == "__main__":
@@ -76,6 +82,6 @@ if __name__ == "__main__":
     # Loading and predicting
     loaded_detector = FakeNewsDetector.load_model('fake_news_model.pkl')
     sample_text = "This is a sample news article."
-    prediction, confidence = loaded_detector.predict(sample_text)
+    prediction, probability = loaded_detector.predict(sample_text)
     print(f"The news is predicted to be: {prediction}")
-    print(f"Confidence score: {confidence:.4f}")
+    print(f"Probability: {probability:.2f}%")
