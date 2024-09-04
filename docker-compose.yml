@@ -1,0 +1,14 @@
+services:
+  app:
+    image: python:3.12-alpine3.19
+    container_name: python_script_container
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: /bin/sh
+    ports:
+      - 8080:8080
+    # Dependencies and other setup
+    build:
+      context: .
+      dockerfile: Dockerfile
