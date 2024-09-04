@@ -164,3 +164,4 @@ cython_debug/
 
 # datas 
 news.csv
+fake_news_model.pkl
