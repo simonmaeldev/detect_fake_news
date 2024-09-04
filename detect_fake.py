@@ -56,7 +56,14 @@ class FakeNewsDetector:
         # Make prediction
         prediction = self.classifier.predict(tfidf_text)
         
-        return prediction[0]
+        # Get confidence score
+        confidence = self.classifier.decision_function(tfidf_text)
+        
+        # The confidence score is a single value for binary classification
+        # Positive values indicate the 'REAL' class, negative values indicate the 'FAKE' class
+        confidence_score = abs(confidence[0])
+        
+        return prediction[0], confidence_score
 
 # Example usage:
 if __name__ == "__main__":
@@ -68,5 +75,6 @@ if __name__ == "__main__":
     # Loading and predicting
     loaded_detector = FakeNewsDetector.load_model('fake_news_model.pkl')
     sample_text = "This is a sample news article."
-    prediction = loaded_detector.predict(sample_text)
+    prediction, confidence = loaded_detector.predict(sample_text)
     print(f"The news is predicted to be: {prediction}")
+    print(f"Confidence score: {confidence:.4f}")
