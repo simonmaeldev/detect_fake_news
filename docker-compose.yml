@@ -1,12 +1,56 @@
 services:
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    networks:
+      - front-network
+    volumes:
+      - ./frontend:/app
+  
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+    depends_on:
+      - frontend
+    networks:
+      - front-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    networks:
+      - front-network
+      - back-network
+    volumes:
+      - ./backend/app:/app
+      - ./shared_models:/app/shared_models
+
+  pong_service:
+    build:
+      context: ./services/pong_service
+      dockerfile: Dockerfile
+    volumes:
+      - ./shared_models:/app/shared_models
+    networks:
+      - back-network
+
   prediction_service:
     build:
-      context: ./prediction_service
+      context: .services/prediction_service
       dockerfile: Dockerfile
-    container_name: prediction_service_container
     working_dir: /app
     volumes:
-      - ./prediction_service:/app
-    ports:
-      - 8080:8080
-    command: python detect_fake.py
+      - ./services/prediction_service:/app
+
+networks:
+  front-network:
+    driver: bridge
+  back-network:
+    driver: bridge
