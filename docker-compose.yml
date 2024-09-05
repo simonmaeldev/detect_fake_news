@@ -43,7 +43,7 @@ services:
 
   prediction_service:
     build:
-      context: .services/prediction_service
+      context: ./services/prediction_service
       dockerfile: Dockerfile
     working_dir: /app
     volumes:
