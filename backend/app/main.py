@@ -26,7 +26,8 @@ app.add_middleware(
 
 # same name as the one defined in the docker-compose service
 services = {
-    'pong': 'http://pong_service:8000'
+    'pong': 'http://pong_service:8000',
+    'prediction': 'http://prediction_service:8000'
 }
 
 def getUrl(serviceName: str, path: str) -> Optional[str]:
@@ -68,6 +69,20 @@ async def system_health():
                 res = "down"
             responses[s] = res
     return responses
+
+@app.post("/predict", response_model=PredictResponse)
+async def predict(input_data: PredictionInput):
+    service_name = 'prediction'
+    async with httpx.AsyncClient() as client:
+        url = getUrl(service_name, 'predict')
+        if url:
+            response = await client.post(url, json=input_data.dict())
+            if response.status_code != 200:
+                raise HTTPException(status_code=500, detail=f"prediction service error, response: {response}")
+            result = response.json()
+            return PredictResponse(**result)
+        else:
+            raise HTTPException(status_code=500, detail=f"server error, service name not defined : {service_name}")
 
 if __name__ == "__main__":
     import uvicorn
