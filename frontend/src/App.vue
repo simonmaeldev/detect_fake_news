@@ -43,7 +43,7 @@ onUnmounted(() => {
       ref="inputRef"
       v-model="inputText"
       @keyup.enter="submitText"
-      placeholder="Paste text or URL"
+      placeholder="Paste text or URL (Ctrl + I to focus)"
       type="text"
     />
     <button @click="submitText">Predict</button>
