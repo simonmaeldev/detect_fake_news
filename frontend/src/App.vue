@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const inputText = ref('')
 const result = ref(null)
+const inputRef = ref(null)
 
 const submitText = async () => {
   try {
@@ -18,12 +19,28 @@ const submitText = async () => {
     console.error('Error:', error)
   }
 }
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.ctrlKey && event.key === 'i') {
+    event.preventDefault()
+    inputRef.value.focus()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+})
 </script>
 
 <template>
   <div class="container">
     <h1>Fake or True Info Predictor</h1>
     <input
+      ref="inputRef"
       v-model="inputText"
       @keyup.enter="submitText"
       placeholder="Paste text or URL"
