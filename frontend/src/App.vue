@@ -21,6 +21,7 @@ const submitText = async () => {
 </script>
 
 <template>
+  <!-- code: this container is not centered. please center it so that it is truely centered on the page. Sub elements are then centered, so just center this one. -->
   <div class="container">
     <h1>Fake or True Info Predictor</h1>
     <input
