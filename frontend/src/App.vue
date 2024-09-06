@@ -1,57 +1,102 @@
 <script setup lang="ts">
-//import Pong from './components/Pong.vue'
+import { ref } from 'vue'
+
+const inputText = ref('')
+const result = ref(null)
+
+const submitText = async () => {
+  try {
+    const response = await fetch('/api/predict', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text: inputText.value }),
+    })
+    result.value = await response.json()
+  } catch (error) {
+    console.error('Error:', error)
+  }
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-    <!-- code: make a dark themed one simple page ui, with round borders -->
-
-    <!-- code: make a title for the page. The goal is to predict if infos inside text (or url) are fake or true -->
-
-    <!-- code: make an input field in the middle of the page, long, round borders. placeholder : "paste text or url" -->
-
-    <!-- code: when submitting the input field, send the text to /api/predict. it will respond with this object: {real: bool, confidence: float}. real is if info is real or not, confidence is in percent, how much it is confident. -->
-
-    <!-- code: print if it is true or not and the confidence. -->
-
-    <!-- code: remove everything that is not related to this app. -->
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div class="container">
+    <h1>Fake or True Info Predictor</h1>
+    <input
+      v-model="inputText"
+      @keyup.enter="submitText"
+      placeholder="Paste text or URL"
+      type="text"
+    />
+    <button @click="submitText">Predict</button>
+    <div v-if="result" class="result">
+      <p>
+        This information is likely
+        <span :class="{ 'true': result.real, 'fake': !result.real }">
+          {{ result.real ? 'TRUE' : 'FAKE' }}
+        </span>
+      </p>
+      <p>Confidence: {{ result.confidence.toFixed(2) }}%</p>
     </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-    <Pong />
-  </main>
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
+body {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+h1 {
+  margin-bottom: 2rem;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 25px;
+  background-color: #333;
+  color: #fff;
+  margin-bottom: 1rem;
+}
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 25px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.result {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-radius: 15px;
+  background-color: #333;
+}
+
+.true {
+  color: #4CAF50;
+}
+
+.fake {
+  color: #f44336;
 }
 </style>
