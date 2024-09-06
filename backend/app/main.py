@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from shared_models.pong_models import PongResponse
+from shared_models.prediction_models import PredictResponse, PredictionInput
 import httpx
 from typing import Optional
 from urllib.parse import urljoin
