@@ -61,16 +61,16 @@ class FakeNewsDetector:
         decision_scores = self.classifier.decision_function(tfidf_text)
         
         # Convert decision scores to probabilities using sigmoid
-        prob = expit(decision_scores)
+        prob = expit(decision_scores)[0]
         
         # Make prediction
         # prediction = 'REAL' if prob > 0.5 else 'FAKE'
         prediction = prob > 0.5
         
-        # Get probability as percentage
-        probability_percentage = prob[0] * 100 if prediction == 'REAL' else (1 - prob[0]) * 100
+        # Get confidence
+        confidence = abs(prob - 0.5) * 2
         
-        return PredictResponse(real=prediction, confidence=round(probability_percentage, 2)) 
+        return PredictResponse(real=prediction, confidence=round(confidence * 100, 2)) 
 
 # Example usage:
 if __name__ == "__main__":
