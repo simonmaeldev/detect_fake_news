@@ -4,9 +4,11 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const inputText = ref('')
 const result = ref(null)
 const inputRef = ref(null)
+const errorMessage = ref('')
 
 const submitText = async () => {
   try {
+    errorMessage.value = ''
     const response = await fetch('/api/predict', {
       method: 'POST',
       headers: {
@@ -14,9 +16,14 @@ const submitText = async () => {
       },
       body: JSON.stringify({ text: inputText.value }),
     })
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
     result.value = await response.json()
   } catch (error) {
     console.error('Error:', error)
+    errorMessage.value = `Error: ${error.message}`
+    result.value = null
   }
 }
 
@@ -55,6 +62,9 @@ onUnmounted(() => {
         </span>
       </p>
       <p>Confidence: {{ result.confidence.toFixed(2) }}%</p>
+    </div>
+    <div v-if="errorMessage" class="error">
+      {{ errorMessage }}
     </div>
   </div>
 </template>
@@ -124,5 +134,11 @@ button:hover {
 
 .fake {
   color: #f44336;
+}
+
+.error {
+  margin-top: 1rem;
+  color: #f44336;
+  font-weight: bold;
 }
 </style>
