@@ -49,7 +49,7 @@ services:
     working_dir: /app
     volumes:
       - ./services/prediction_service:/app
-
+      - ./shared_models:/app/shared_models
 networks:
   front-network:
     driver: bridge
