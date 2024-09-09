@@ -81,9 +81,7 @@ async def predict(input_data: PredictionInput):
             try:
                 # Use the get_url_content service to fetch the content
                 url_content = await get_url_content(input_data.text)
-                input_data.text = url_content['content']
-            except HTTPException as e:
-                raise e
+                input_data.text = url_content.content
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"An error occurred while fetching URL: {str(e)}")
 
@@ -98,7 +96,7 @@ async def predict(input_data: PredictionInput):
             raise HTTPException(status_code=500, detail=f"server error, service name not defined : {service_name}")
 
 @app.get("/get_url_content", response_model=UrlContentResponse)
-async def get_url_content(url: str):
+async def get_url_content(url: str) -> UrlContentResponse:
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(url)
