@@ -5,8 +5,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import PassiveAggressiveClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
 import pickle
-from typing import Tuple, Union
+from typing import Union
 from scipy.special import expit
+from shared_models.prediction_models import PredictResponse
 
 class FakeNewsDetector:
     def __init__(self, 
@@ -52,7 +53,7 @@ class FakeNewsDetector:
             detector.vectorizer, detector.classifier = pickle.load(file)
         return detector
     
-    def predict(self, text: str) -> Tuple[str, float]:
+    def predict(self, text: str) -> PredictResponse:
         # Vectorize the input text
         tfidf_text = self.vectorizer.transform([text])
         
@@ -63,12 +64,13 @@ class FakeNewsDetector:
         prob = expit(decision_scores)
         
         # Make prediction
-        prediction = 'REAL' if prob > 0.5 else 'FAKE'
+        # prediction = 'REAL' if prob > 0.5 else 'FAKE'
+        prediction = prob > 0.5
         
         # Get probability as percentage
         probability_percentage = prob[0] * 100 if prediction == 'REAL' else (1 - prob[0]) * 100
         
-        return prediction, round(probability_percentage, 2)
+        return PredictResponse(real=prediction, confidence=round(probability_percentage, 2)) 
 
 # Example usage:
 if __name__ == "__main__":
