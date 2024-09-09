@@ -76,7 +76,7 @@ async def predict(input_data: PredictionInput):
     async with httpx.AsyncClient() as client:
         url = getUrl(service_name, 'predict')
         if url:
-            response = await client.post(url, json=input_data.dict())
+            response = await client.post(url, json=input_data.model_dump())
             if response.status_code != 200:
                 raise HTTPException(status_code=500, detail=f"prediction service error, response: {response}")
             result = response.json()
