@@ -5,6 +5,7 @@ from shared_models.prediction_models import PredictResponse, PredictionInput
 import httpx
 from typing import Optional
 from urllib.parse import urljoin
+from bs4 import BeautifulSoup
 
 app = FastAPI(openapi_url="/openapi.json")
 
@@ -83,6 +84,20 @@ async def predict(input_data: PredictionInput):
             return PredictResponse(**result)
         else:
             raise HTTPException(status_code=500, detail=f"server error, service name not defined : {service_name}")
+
+@app.get("/get_url_content")
+async def get_url_content(url: str):
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(url)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, 'html.parser')
+            text_content = soup.get_text(separator=' ', strip=True)
+            return {"url": url, "content": text_content}
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(status_code=e.response.status_code, detail=f"Error fetching URL: {e}")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
