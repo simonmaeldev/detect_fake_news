@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from shared_models.pong_models import PongResponse
 from shared_models.prediction_models import PredictResponse, PredictionInput
 from shared_models.backend_models import UrlContentResponse
 import httpx
@@ -28,7 +27,6 @@ app.add_middleware(
 
 # same name as the one defined in the docker-compose service
 services = {
-    'pong': 'http://pong_service:7999',
     'prediction': 'http://prediction_service:8000'
 }
 
@@ -37,23 +35,6 @@ def getUrl(serviceName: str, path: str) -> Optional[str]:
         return urljoin(services[serviceName], path)
     else:
         return None
-    
-
-@app.get("/ping", response_model=PongResponse)
-async def ping():
-    service_name = 'pong'
-    async with httpx.AsyncClient() as client:
-        url = getUrl(service_name, 'ping')
-        if url :
-            response = await client.get(url)
-            if response.status_code != 200:
-                raise HTTPException(status_code=500, detail=f"pong service error, response: {response}")
-            result = response.json()
-            return PongResponse(**result)
-        else:
-            raise HTTPException(status_code=500, detail=f"server error, service name not defined : {service_name}")
-
-
 
 @app.get("/health")
 async def health():

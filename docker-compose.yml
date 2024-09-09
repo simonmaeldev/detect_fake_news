@@ -33,15 +33,6 @@ services:
       - ./backend/app:/app
       - ./shared_models:/app/shared_models
 
-  pong_service:
-    build:
-      context: ./services/pong_service
-      dockerfile: Dockerfile
-    volumes:
-      - ./shared_models:/app/shared_models
-    networks:
-      - back-network
-
   prediction_service:
     build:
       context: ./services/prediction_service
