@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from shared_models.pong_models import PongResponse
 from shared_models.prediction_models import PredictResponse, PredictionInput
+from shared_models.backend_models import UrlContentResponse
 import httpx
 from typing import Optional
 from urllib.parse import urljoin
@@ -96,7 +97,7 @@ async def predict(input_data: PredictionInput):
         else:
             raise HTTPException(status_code=500, detail=f"server error, service name not defined : {service_name}")
 
-@app.get("/get_url_content")
+@app.get("/get_url_content", response_model=UrlContentResponse)
 async def get_url_content(url: str):
     async with httpx.AsyncClient() as client:
         try:
@@ -104,7 +105,7 @@ async def get_url_content(url: str):
             response.raise_for_status()
             soup = BeautifulSoup(response.text, 'html.parser')
             text_content = soup.get_text(separator=' ', strip=True)
-            return {"url": url, "content": text_content}
+            return UrlContentResponse(url=url, content=text_content)
         except httpx.HTTPStatusError as e:
             raise HTTPException(status_code=e.response.status_code, detail=f"Error fetching URL: {e}")
         except Exception as e:
