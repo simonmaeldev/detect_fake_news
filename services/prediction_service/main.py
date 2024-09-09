@@ -3,7 +3,7 @@ from detect_fake import FakeNewsDetector
 from shared_models.prediction_models import PredictionInput, PredictResponse
 import os
 
-app = FastAPI()
+app = FastAPI(openapi_url="/openapi.json")
 
 MODEL_FILE = 'fake_news_model.pkl'
 CSV_FILE = 'news.csv'

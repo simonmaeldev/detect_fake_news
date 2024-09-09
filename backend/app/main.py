@@ -6,7 +6,7 @@ import httpx
 from typing import Optional
 from urllib.parse import urljoin
 
-app = FastAPI()
+app = FastAPI(openapi_url="/openapi.json")
 
 # for the CORS
 origins = [
@@ -26,7 +26,7 @@ app.add_middleware(
 
 # same name as the one defined in the docker-compose service
 services = {
-    'pong': 'http://pong_service:8000',
+    'pong': 'http://pong_service:7999',
     'prediction': 'http://prediction_service:8000'
 }
 

@@ -50,6 +50,9 @@ services:
     volumes:
       - ./services/prediction_service:/app
       - ./shared_models:/app/shared_models
+    networks:
+      - back-network
+
 networks:
   front-network:
     driver: bridge

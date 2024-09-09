@@ -11,8 +11,8 @@ RUN apk add --no-cache gcc g++ make libffi-dev musl-dev python3-dev
 RUN pip install scikit-learn
 
 # Copy the requirements file and install dependencies
-COPY app/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# COPY app/requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code
 COPY . .
