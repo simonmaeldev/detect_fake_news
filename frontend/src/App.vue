@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
+interface PredictionResult {
+  real: boolean;
+  confidence: number;
+}
+
 const inputText = ref('')
-const result = ref(null)
-const inputRef = ref(null)
+const result = ref<PredictionResult | null>(null)
+const inputRef = ref<HTMLInputElement | null>(null)
 const errorMessage = ref('')
 
 const submitText = async () => {
@@ -19,10 +24,10 @@ const submitText = async () => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
-    result.value = await response.json()
-  } catch (error) {
+    result.value = await response.json() as PredictionResult
+  } catch (error: unknown) {
     console.error('Error:', error)
-    errorMessage.value = `Error: ${error.message}`
+    errorMessage.value = `Error: ${error instanceof Error ? error.message : String(error)}`
     result.value = null
   }
 }
@@ -30,7 +35,7 @@ const submitText = async () => {
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.ctrlKey && event.key === 'i') {
     event.preventDefault()
-    inputRef.value.focus()
+    inputRef.value?.focus()
   }
 }
 
