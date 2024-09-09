@@ -75,6 +75,17 @@ async def system_health():
 async def predict(input_data: PredictionInput):
     service_name = 'prediction'
     async with httpx.AsyncClient() as client:
+        # Check if input_data.text is a URL
+        if input_data.text.startswith(('http://', 'https://')):
+            try:
+                # Use the get_url_content service to fetch the content
+                url_content = await get_url_content(input_data.text)
+                input_data.text = url_content['content']
+            except HTTPException as e:
+                raise e
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"An error occurred while fetching URL: {str(e)}")
+
         url = getUrl(service_name, 'predict')
         if url:
             response = await client.post(url, json=input_data.model_dump())
