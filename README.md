@@ -6,6 +6,8 @@ This project is an implementation of the fake news detection system described in
 
 This project serves as an exercise to train and improve Python programming skills, particularly in the areas of natural language processing and machine learning. It demonstrates how to build a simple fake news detector using Python and various libraries.
 
+Note: the predictions could be better, but it wasn't the main goal of this project.
+
 ## Installation
 
 1. Download the CSV file from [this Google Drive link](https://drive.google.com/file/d/1er9NJTLUA3qnRuyhfzuN0XUsoIC4a-_q/view).
@@ -17,7 +19,7 @@ This project serves as an exercise to train and improve Python programming skill
 - Frontend: Vue 3 (Vite) served by Nginx
 - Backend: FastAPI with Uvicorn
 - Reverse Proxy: Nginx
-- Microservices: Example 'pong' service
+- Microservice: predict to predict if informations in text or website are fake or real.
 - Everything is dockerized for easy deployment and scaling
 
 ## Build and Run
@@ -41,19 +43,17 @@ This project serves as an exercise to train and improve Python programming skill
 
 ### Production
 
-1. In the `docker-compose.yml` file, change the frontend service to use `Dockerfile` (without `.dev`).
-2. In the `backend/Dockerfile`, remove the `"--reload"` : it is useful in dev as it reload the server each time a file change, but use ressources for nothing in prod.
-3. Build and run the production environment:
+Build and run the production environment:
 
-   ```
-   docker compose up -d --build
-   ```
+```
+docker compose up -d --build
+```
 
 ## API Endpoints
 
 The application provides several endpoints for health checks and basic functionality:
 
-- `/api/ping`: Returns a "pong" response. This demonstrates the communication between the backend and the pong microservice.
+- `/api/docs`: Return the doc with all the services available.
 - `/api/health`: Backend health check endpoint.
 - `/api/system-health`: Checks the health of all services (backend and microservices).
 - `/nginx-health`: Nginx health check endpoint.
@@ -76,39 +76,6 @@ This template is structured to be scalable. You can add more microservices by:
 3. Updating the `backend/app/main.py` to include routing to the new service
 
 Remember to update the README as you add new services or endpoints.
-
-## Notes
-
-- The template currently responds with "pong" when accessing `/api/ping`, demonstrating the basic structure for microservice communication.
-- Modify and expand upon this template to fit your specific application needs.
-
-## Testing the Application
-
-After starting the application, you can test the various endpoints:
-
-1. Ping test: `curl http://localhost/api/ping`
-2. Backend health: `curl http://localhost/api/health`
-3. System-wide health: `curl http://localhost/api/system-health`
-4. Nginx health: `curl http://localhost/nginx-health`
-
-## Troubleshooting
-
-If you encounter any issues:
-
-1. Check if all containers are running: `docker compose ps`
-2. View logs of a specific service: `docker compose logs <service_name>`
-3. Ensure all required ports are free on your host machine
-4. Verify that all services can communicate with each other within the Docker network
-
-## Contributing
-
-Contributions to improve this template are welcome. Please follow these steps:
-
-1. Fork the repository
-2. Create a new branch for your feature
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
 
 ## License
 
